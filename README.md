@@ -4,15 +4,21 @@ A full-stack application for managing website bookmarks with automatic metadata 
 
 ## Project Structure
 
-The project is divided into two main parts:
+The project is organized into three main parts:
+
+### API Specification (Root)
+
+- `openapi.yaml`: OpenAPI 3.0 specification defining the REST API interface
+  - Used by backend for API implementation
+  - Used by frontend to generate type-safe API client
 
 ### Backend (/backend)
 
 A Go backend service providing:
-- RESTful API for bookmark management
+- RESTful API implementation following OpenAPI spec
 - Automatic metadata extraction (title, description, favicon)
 - PostgreSQL database storage
-- OpenAPI specification
+- Comprehensive error handling
 
 ### Frontend (/frontend)
 
@@ -60,7 +66,7 @@ cd frontend
 npm install
 ```
 
-3. Generate API client code:
+3. Generate API client code (uses root openapi.yaml):
 ```bash
 npm run generate-api
 ```
@@ -74,7 +80,13 @@ The frontend application will be available at http://localhost:3000
 
 ## Development
 
-### Backend
+### API First Development
+
+1. Update the OpenAPI specification (`openapi.yaml`) in the root directory
+2. Implement the changes in the backend
+3. Generate the frontend API client to get updated types and endpoints
+
+### Backend Development
 
 - `cmd/server`: Main application entry point
 - `internal/api`: HTTP handlers and routing
@@ -83,15 +95,18 @@ The frontend application will be available at http://localhost:3000
 - `internal/storage`: Database operations
 - `migrations`: SQL migration files
 
-### Frontend
+### Frontend Development
 
 - `src/components`: React components
 - `src/api`: Generated API client code
 - `src/app`: Next.js application files
 
-## API Documentation
+## Documentation
 
-The API is documented using OpenAPI 3.0. The specification is available at `backend/openapi.yaml`.
+- Root `README.md`: Project overview and setup
+- `backend/README.md`: Detailed backend documentation
+- `frontend/README.md`: Detailed frontend documentation
+- `openapi.yaml`: API specification and documentation
 
 ## Error Handling
 
