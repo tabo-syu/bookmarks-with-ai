@@ -1,112 +1,80 @@
-# Bookmarks Go Backend
+# Bookmarks Application
 
-A Go backend service for managing website bookmarks with automatic metadata scraping.
+A full-stack application for managing website bookmarks with automatic metadata scraping.
 
-## Features
+## Project Structure
 
+The project is divided into two main parts:
+
+### Backend (/backend)
+
+A Go backend service providing:
 - RESTful API for bookmark management
 - Automatic metadata extraction (title, description, favicon)
 - PostgreSQL database storage
-- CORS support for frontend integration
-- Graceful shutdown handling
+- OpenAPI specification
 
-## Prerequisites
+### Frontend (/frontend)
 
-- Go 1.21 or higher
-- PostgreSQL 12 or higher
-- Make (optional, for using Makefile commands)
+A Next.js frontend application providing:
+- Modern, responsive user interface
+- Real-time bookmark management
+- Automatic metadata display
+- TypeScript and React Query integration
 
-## Setup
+## Getting Started
 
-1. Create a PostgreSQL database:
-```sql
-CREATE DATABASE bookmarks;
-```
+### Backend Setup
 
-2. Run the database migrations:
+1. Navigate to the backend directory:
 ```bash
-psql -U postgres -d bookmarks -f migrations/001_create_bookmarks_table.sql
+cd backend
 ```
 
-3. Configure environment variables (optional):
+2. Start the database:
 ```bash
-export PORT=8080  # Default: 8080
-export DATABASE_URL="postgres://postgres:postgres@localhost:5432/bookmarks?sslmode=disable"
+docker-compose up -d postgres
 ```
 
-## Building and Running
-
-1. Build the server:
+3. Apply database migrations:
 ```bash
-go build -o bookmarks-server ./cmd/server
+docker exec -i bookmarks_db psql -U postgres -d bookmarks_db < migrations/001_create_bookmarks_table.sql
 ```
 
-2. Run the server:
+4. Start the server:
 ```bash
-./bookmarks-server
+go run cmd/server/main.go
 ```
 
-The server will start on port 8080 (or the configured PORT).
+The backend API will be available at http://localhost:8081/api
 
-## API Endpoints
+### Frontend Setup
 
-### Create Bookmark
-```http
-POST /api/bookmarks
-Content-Type: application/json
-
-{
-    "url": "https://example.com"
-}
-```
-
-### List Bookmarks
-```http
-GET /api/bookmarks
-```
-
-### Get Bookmark
-```http
-GET /api/bookmarks/{id}
-```
-
-### Delete Bookmark
-```http
-DELETE /api/bookmarks/{id}
-```
-
-## Testing with curl
-
-Here are some example curl commands to test the API endpoints:
-
-### Create a new bookmark
+1. Navigate to the frontend directory:
 ```bash
-curl -i -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"url":"https://example.com"}' \
-  http://localhost:8081/api/bookmarks
+cd frontend
 ```
 
-### List all bookmarks
+2. Install dependencies:
 ```bash
-curl -i -X GET http://localhost:8081/api/bookmarks
+npm install
 ```
 
-### Get a specific bookmark (replace {id} with actual bookmark ID)
+3. Generate API client code:
 ```bash
-curl -i -X GET http://localhost:8081/api/bookmarks/1
+npm run generate-api
 ```
 
-### Delete a bookmark (replace {id} with actual bookmark ID)
+4. Start the development server:
 ```bash
-curl -i -X DELETE http://localhost:8081/api/bookmarks/1
+npm run dev
 ```
 
-Note: The `-i` flag is included to show the response headers along with the body.
+The frontend application will be available at http://localhost:3000
 
 ## Development
 
-The project follows a standard Go project layout:
+### Backend
 
 - `cmd/server`: Main application entry point
 - `internal/api`: HTTP handlers and routing
@@ -115,26 +83,36 @@ The project follows a standard Go project layout:
 - `internal/storage`: Database operations
 - `migrations`: SQL migration files
 
+### Frontend
+
+- `src/components`: React components
+- `src/api`: Generated API client code
+- `src/app`: Next.js application files
+
+## API Documentation
+
+The API is documented using OpenAPI 3.0. The specification is available at `backend/openapi.yaml`.
+
 ## Error Handling
 
-The API returns appropriate HTTP status codes:
+Both frontend and backend implement proper error handling:
 
-- 200: Success
-- 400: Bad Request (invalid input)
-- 404: Not Found
-- 500: Internal Server Error
+### Backend
+- Appropriate HTTP status codes
+- Structured error responses
+- Input validation
+- Database error handling
+
+### Frontend
+- Loading states
+- Error messages
+- Form validation
+- Network error handling
 
 ## Security
 
-- Input validation for URLs
-- Prepared statements for database queries
-- CORS headers for frontend integration
-- Rate limiting (TODO)
+- CORS configuration
+- Input sanitization
+- Prepared SQL statements
 - Request timeouts
-
-## Performance
-
-- Connection pooling for database
-- Proper indexing on database tables
-- Configurable timeouts for HTTP operations
-- Graceful shutdown handling
+- Secure HTTP headers
